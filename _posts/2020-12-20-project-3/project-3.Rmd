@@ -1,0 +1,146 @@
+---
+title: "Project 3"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+```{r}
+library(tidyverse)
+theme_set(theme_minimal())
+```
+
+```{r}
+confirmed_cases_worldwide <- read_csv(here::here("data", "confirmed_cases_worldwide.csv"))
+```
+
+
+```{r}
+ggplot(confirmed_cases_worldwide, aes(date, cum_cases )) +
+  geom_line() 
+```
+
+
+```{r}
+# Read in datasets/confirmed_cases_china_vs_world.csv
+confirmed_cases_china_vs_world <-  read_csv(here::here("data", "confirmed_cases_china_vs_world.csv"))
+
+# See the result
+glimpse(confirmed_cases_china_vs_world)
+
+ggplot(confirmed_cases_china_vs_world, aes(date, cum_cases, color = is_china, group = is_china)) +
+  geom_line() +
+  ylab("Cumulative confirmed cases")
+
+```
+
+
+```{r}
+who_events <- tribble(
+  ~ date, ~ event,
+  "2020-01-30", "Global health\nemergency declared",
+  "2020-03-11", "Pandemic\ndeclared",
+  "2020-02-13", "China reporting\nchange"
+) %>%
+  mutate(date = as.Date(date))
+
+ggplot(confirmed_cases_china_vs_world) +
+  geom_line(aes(date, cum_cases, color = is_china, group = is_china)) +
+  ylab("Cumulative confirmed cases") +
+  geom_vline(data = who_events, aes(xintercept = date), linetype = 8) +
+  geom_text(data = who_events, aes(date, label = event), y = 1e5)
+```
+
+
+```{r}
+# Filter for China, from Feb 15
+china_after_feb15 <- confirmed_cases_china_vs_world %>%
+  filter(date >= as.Date("2020-02-15"), is_china == "China")
+
+# Using china_after_feb15, draw a line plot cum_cases vs. date
+# Add a smooth trend line using linear regression, no error bars
+ggplot(china_after_feb15, aes(date, cum_cases)) +
+  geom_line() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ylab("Cumulative confirmed cases")
+```
+
+
+```{r}
+# Filter confirmed_cases_china_vs_world for not China
+not_china <- confirmed_cases_china_vs_world %>%
+  filter(is_china != "China")
+
+# Using not_china, draw a line plot cum_cases vs. date
+# Add a smooth trend line using linear regression, no error bars
+plt_not_china_trend_lin <- ggplot(not_china, aes(date, cum_cases)) +
+  geom_line() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ylab("Cumulative confirmed cases")
+
+# See the result
+plt_not_china_trend_lin 
+```
+
+
+From the plot above, we can see a straight line does not fit well at all, and the rest of the world is growing much faster than linearly. What if we added a logarithmic scale to the y-axis?
+
+
+```{r}
+plt_not_china_trend_lin + 
+  scale_y_log10()
+```
+
+
+```{r}
+confirmed_cases_by_country <- read_csv(here::here("data", "confirmed_cases_by_country.csv"))
+```
+
+```{r}
+confirmed_cases_by_country %>% 
+  group_by(country) %>% 
+  summarize(total_cases = sum(cum_cases)) %>% 
+  arrange(desc(total_cases)) %>% 
+  head(7) -> top_countries_by_total_cases
+```
+
+
+```{r}
+confirmed_cases_top7_outside_china <- read_csv(here::here("data", "confirmed_cases_top7_outside_china.csv")) 
+
+ggplot(confirmed_cases_top7_outside_china, aes(date, cum_cases, color = country)) +
+  geom_line() +
+  ylab("Cumulative confirmed cases")
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
