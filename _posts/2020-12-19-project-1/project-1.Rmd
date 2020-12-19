@@ -5,10 +5,9 @@ description: |
 author:
   - name: Unknown
 date: 12-19-2020
-output:
+output: 
   distill::distill_article:
-    highlight: haddock
-    highlight_downlit: false
+    toc: true
 ---
 
 
@@ -16,15 +15,18 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Libraries:
+## Libraries:
 ```{r}
 library(tidyverse)
 ```
+
 
 ```{r}
 life_expec <- read_csv(here::here("data", "undata1.csv")) %>% 
   janitor::clean_names()
 ```
+
+
 ```{r}
 (dt <- life_expec %>% 
   filter(year == "2000-2005") %>% 
@@ -44,6 +46,8 @@ dt %>%
   geom_abline(slope = 1)
 ```
 
+
+
 ```{r}
 ggplot(dt, aes(x=Male, y=Female))+
   geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
@@ -57,7 +61,10 @@ ggplot(dt, aes(x=Male, y=Female))+
        y="Females")
 ```
 
+
 Finding where `Male` and `Female` life expectancy difference is the highest.
+
+
 ```{r}
 top_male <- dt %>% arrange(desc(Male - Female)) %>% head(3)
 top_female <- dt %>% arrange(desc(Female - Male)) %>% head(3)

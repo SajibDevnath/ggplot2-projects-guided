@@ -3,6 +3,7 @@ title: "ggplot2 projects"
 description: |
   Some ggplot2 projects I'm doing.
 site: distill::distill_website
+listing: posts
 ---
 
 ```{r setup, include=FALSE}
