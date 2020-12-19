@@ -13,3 +13,7 @@ output:
   distill::distill_article:
     toc: false
 theme: theme.css
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+    
