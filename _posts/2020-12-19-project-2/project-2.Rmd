@@ -1,0 +1,135 @@
+---
+title: "Project 2"
+description: |
+  A short description of the post.
+author:
+  - name: Unknown
+    url: {}
+date: 12-19-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Who Is Drunk and When in Ames, Iowa?
+
+Library:
+
+```{r}
+library(tidyverse)
+theme_set(theme_minimal())
+```
+
+Data:
+
+```{r}
+ba_data <- read_csv(here::here("data", "breath_alcohol_ames.csv"))
+ba_year <- count(ba_data, year)
+```
+
+
+Data manipulation:
+
+```{r}
+(
+  
+  pds <- ba_data %>% 
+    group_by(location) %>% 
+    summarise(n = n())
+  
+)
+```
+
+
+Hourly Breathalyzer tests:
+
+```{r}
+ba_data %>% 
+  group_by(hour) %>% 
+  summarise(test_num = n()) %>% 
+  ggplot(aes(x = hour, y = test_num)) +
+  geom_col()
+```
+
+
+Monthly Breathalyzer tests:
+
+```{r}
+ba_data %>% 
+  group_by(month) %>% 
+  summarise(test_num = n()) %>% 
+  ggplot(aes(x = month, y = test_num)) +
+  geom_col(width = .7) +
+  scale_x_continuous(breaks = 1:12)
+```
+
+
+Tests by Gender:
+
+```{r}
+ba_data %>% 
+  filter(!is.na(gender)) %>% 
+  mutate(meanRes = (Res1 + Res2) / 2) %>% 
+  ggplot(aes(gender, meanRes)) +
+  geom_boxplot()
+```
+
+
+```{r}
+ba_data %>% 
+  mutate(date = lubridate::ymd(paste(year, month, day, sep = "-"))) %>% 
+  mutate(week = lubridate::week(date)) %>% 
+  mutate(year = as.factor(year)) %>% 
+  count(year, week) %>% 
+  ggplot(aes(week, n, color = year)) +
+  geom_line() +
+  facet_wrap(~ year, ncol = 1, strip.position = "right") +
+  scale_x_continuous(breaks = seq(0,52,4))
+```
+
+
+
+```{r}
+weekly <- ba_data %>% 
+  mutate(date = lubridate::ymd(paste(year, month, day, sep = "-"))) %>% 
+  mutate(week = lubridate::week(date)) %>% 
+  mutate(year = as.factor(year)) %>% 
+  count(year, week) 
+
+ggplot() + 
+  geom_point(data = weekly, aes(x = week, y = n, color = year)) + 
+  geom_line(data = weekly, aes(x = week, y = n, color = year)) +  # included to make the plot more readable 
+  geom_segment(data = NULL, arrow = arrow(angle = 20, length = unit(0.1, "inches"),
+                                          ends = "last", type = "closed"), 
+               aes(x = c(20,20), xend = c(15.5,16), y = c(21, 20), yend = c(21, 12.25))) + 
+  geom_text(data = NULL, aes(x = 23, y = 20.5, label = "VEISHEA Weeks"), size = 3) + 
+  scale_x_continuous(breaks = seq(0,52,4)) +
+  theme(aspect.ratio = .5)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
