@@ -3,11 +3,12 @@ title: "Project 1"
 description: |
   A short description of the post.
 author:
-  - name: Unknown
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
 date: 12-19-2020
-output: 
+output:
   distill::distill_article:
-    toc: true
+    self_contained: false
 ---
 
 
@@ -15,7 +16,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Libraries:
+Libraries:
+  
 ```{r}
 library(tidyverse)
 ```
@@ -123,7 +125,7 @@ theme_bw()
 ```{r}
 
 top <- dt2 %>% arrange(diff_male+diff_female) %>% head(3)
-bottom <- dt2 %>% arrange(diff_male+diff_female) %>% tail(3)
+bottom <- dt2 %>% arrange(-(diff_male+diff_female)) %>% head(3)
 
 ggplot(dt2, aes(x=diff_male, y=diff_female, label=country_or_area))+
   geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
