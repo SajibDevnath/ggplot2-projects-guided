@@ -1,0 +1,19 @@
+[
+  {
+    "path": "posts/2020-12-19-project-1/",
+    "title": "Project 1",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Unknown",
+        "url": {}
+      }
+    ],
+    "date": "2020-12-19",
+    "categories": [],
+    "contents": "\r\nLibraries:\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n# A tibble: 195 x 3\r\n   country     Female  Male\r\n   <chr>        <dbl> <dbl>\r\n 1 Afghanistan     42    42\r\n 2 Albania         79    73\r\n 3 Algeria         72    70\r\n 4 Angola          43    39\r\n 5 Argentina       78    71\r\n 6 Armenia         75    68\r\n 7 Aruba           76    70\r\n 8 Australia       83    78\r\n 9 Austria         82    76\r\n10 Azerbaijan      70    63\r\n# ... with 185 more rows\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nFinding where Male and Female life expectancy difference is the highest.\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-19-project-1/project-1_files/figure-html5/unnamed-chunk-4-1.png",
+    "last_modified": "2020-12-19T17:57:28+06:00",
+    "input_file": "project-1.utf8.md"
+  }
+]

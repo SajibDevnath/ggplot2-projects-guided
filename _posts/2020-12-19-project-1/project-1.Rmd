@@ -1,0 +1,135 @@
+---
+title: "Project 1"
+description: |
+  A short description of the post.
+author:
+  - name: Unknown
+date: 12-19-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Libraries:
+```{r}
+library(tidyverse)
+```
+
+```{r}
+life_expec <- read_csv(here::here("data", "undata1.csv")) %>% 
+  janitor::clean_names()
+```
+```{r}
+(dt <- life_expec %>% 
+  filter(year == "2000-2005") %>% 
+  rename(country = country_or_area, gender = subgroup, life_expectancy = value) %>% 
+  select(country, gender, life_expectancy) %>% 
+  pivot_wider(names_from = gender, values_from = life_expectancy)   
+)
+```
+
+
+```{r}
+dt %>% 
+  ggplot(aes(x = Male, y = Female)) +
+  geom_point() +
+  xlim(35, 85) +
+  ylim(35, 85) + 
+  geom_abline(slope = 1)
+```
+
+```{r}
+ggplot(dt, aes(x=Male, y=Female))+
+  geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
+  geom_abline(intercept = 0, slope = 1, linetype=2)+
+  scale_x_continuous(limits=c(35,85))+
+  scale_y_continuous(limits=c(35,85))+
+  labs(title="Life Expectancy at Birth by Country",
+       subtitle="Years. Period: 2000-2005. Average.",
+       caption="Source: United Nations Statistics Division",
+       x="Males",
+       y="Females")
+```
+
+Finding where `Male` and `Female` life expectancy difference is the highest.
+```{r}
+top_male <- dt %>% arrange(desc(Male - Female)) %>% head(3)
+top_female <- dt %>% arrange(desc(Female - Male)) %>% head(3)
+```
+
+
+```{r}
+ggplot(dt, aes(x=Male, y=Female))+
+  geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
+  geom_abline(intercept = 0, slope = 1, linetype=2)+
+  scale_x_continuous(limits=c(35,85))+
+  scale_y_continuous(limits=c(35,85))+
+  geom_text(data = top_male, aes(label = country)) +
+  geom_text(data = top_female, aes(label = country)) +
+  labs(title="Life Expectancy at Birth by Country",
+       subtitle="Years. Period: 2000-2005. Average.",
+       caption="Source: United Nations Statistics Division",
+       x="Males",
+       y="Females") +
+  theme_bw()
+  
+```
+
+```{r}
+life_expec %>% 
+  filter(year %in% c("1985-1990", "2000-2005")) %>% 
+  mutate(sub_year = paste(subgroup, year, sep = "_")) %>% 
+  mutate(sub_year=gsub("-", "_", sub_year)) %>% 
+  select(-subgroup, -year) %>% 
+  pivot_wider(names_from = sub_year, values_from = value) %>% 
+  mutate(
+    diff_female = Female_2000_2005 - Female_1985_1990,
+    diff_male = Male_2000_2005 - Male_1985_1990 
+  ) -> dt2
+```
+
+
+```{r}
+ggplot(dt2, aes(x=diff_male, y=diff_female, label=country_or_area))+
+  geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
+  geom_abline(intercept = 0, slope = 1, linetype=2)+
+  xlim(-25, 25) +
+  ylim(-25, 25) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  labs(title="Life Expectancy at Birth by Country in Years",
+       subtitle="Difference between 1985-1990 and 2000-2005. Average.",
+       caption="Source: United Nations Statistics Division",
+       x="Males",
+       y="Females")+
+theme_bw()
+```
+
+
+
+```{r}
+
+top <- dt2 %>% arrange(diff_male+diff_female) %>% head(3)
+bottom <- dt2 %>% arrange(diff_male+diff_female) %>% tail(3)
+
+ggplot(dt2, aes(x=diff_male, y=diff_female, label=country_or_area))+
+  geom_point(colour="white", fill="chartreuse3", shape=21, alpha=.55, size=5)+
+  geom_abline(intercept = 0, slope = 1, linetype=2)+
+  geom_text(data = top, aes(label = country_or_area)) +
+  geom_text(data = bottom, aes(label = country_or_area)) +
+  xlim(-25, 25) +
+  ylim(-25, 25) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  labs(title="Life Expectancy at Birth by Country in Years",
+       subtitle="Difference between 1985-1990 and 2000-2005. Average.",
+       caption="Source: United Nations Statistics Division",
+       x="Males",
+       y="Females")+
+theme_bw()
+```

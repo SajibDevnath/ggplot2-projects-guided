@@ -1,12 +1,12 @@
-name: "."
+name: "ggplot2 projects"
 title: "ggplot2 projects"
 description: |
-  ggplot2 projects
+  Some ggplot2 projects I'm doing.
 output_dir: "docs"
 navbar:
   right:
-    - text: "Home"
-      href: index.html
     - text: "About"
-      href: about.html
+      href: index.html
+    - text: "posts"
+      href: posts.html
 output: distill::distill_article
