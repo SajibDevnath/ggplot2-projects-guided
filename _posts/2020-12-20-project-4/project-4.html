@@ -1632,13 +1632,14 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre><code><span class='va'>plot_price_forecast</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>time_series</span>, <span class='va'>commodity</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>potato_price_forcast</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://pkg.robjhyndman.com/forecast/reference/forecast.html'>forecast</a></span><span class='op'>(</span><span class='va'>potato_time_series</span><span class='op'>)</span>
+<pre><code><span class='va'>beans_time_series</span> <span class='op'>&lt;-</span> <span class='fu'>create_price_time_series</span><span class='op'>(</span><span class='va'>beans_dry</span><span class='op'>)</span>
+
+<span class='va'>plot_price_forecast</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>time_series</span>, <span class='va'>commodity</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>potato_price_forcast</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://pkg.robjhyndman.com/forecast/reference/forecast.html'>forecast</a></span><span class='op'>(</span><span class='va'>time_series</span><span class='op'>)</span>
   <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/autoplot.html'>autoplot</a></span><span class='op'>(</span><span class='va'>potato_price_forcast</span>, main <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>commodity</span>, <span class='st'>" price forecast"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
 
-<span class='co'># Try the function on the pea data</span>
-<span class='fu'>plot_price_forecast</span><span class='op'>(</span><span class='va'>beans_dry</span>, <span class='st'>"Beans"</span><span class='op'>)</span>
+<span class='fu'>plot_price_forecast</span><span class='op'>(</span><span class='va'>beans_time_series</span>, <span class='st'>"Beans"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <p><img src="project-4_files/figure-html5/unnamed-chunk-13-1.png" width="768" /></p>

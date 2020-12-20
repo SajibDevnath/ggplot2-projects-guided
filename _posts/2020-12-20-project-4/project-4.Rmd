@@ -157,13 +157,14 @@ autoplot(potato_price_forcast, main = "Potato price forecast")
 
 
 ```{r}
+beans_time_series <- create_price_time_series(beans_dry)
+
 plot_price_forecast <- function(time_series, commodity) {
-  potato_price_forcast <- forecast(potato_time_series)
+  potato_price_forcast <- forecast(time_series)
   autoplot(potato_price_forcast, main = paste0(commodity, " price forecast"))
 }
 
-# Try the function on the pea data
-plot_price_forecast(beans_dry, "Beans")
+plot_price_forecast(beans_time_series, "Beans")
 ```
 
 
