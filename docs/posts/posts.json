@@ -85,6 +85,23 @@
     "input_file": {}
   },
   {
+    "path": "posts/2020-12-20-project-8/",
+    "title": "Project 8",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Sajib Devnath",
+        "url": "https://www.sajibdevnath.com"
+      }
+    ],
+    "date": "2020-12-20",
+    "categories": [],
+    "contents": "\r\n\r\n\r\nlibrary(tidyverse)\r\nlibrary(lubridate)\r\ntheme_set(theme_minimal())\r\n\r\n\r\n\r\n\r\n\r\nresponses <- read_csv(here::here(\"data\", \"kagglesurvey.csv\"))\r\n\r\n\r\n\r\n\r\n\r\ntools <- responses %>% \r\n  mutate(work_tools = str_split(WorkToolsSelect, \",\")) %>% \r\n  unnest(work_tools) \r\n\r\nhead(tools)\r\n\r\n\r\n# A tibble: 6 x 6\r\n  Respondent WorkToolsSelect LanguageRecomme~ EmployerIndustry\r\n       <dbl> <chr>           <chr>            <chr>           \r\n1          1 Amazon Web ser~ F#               Internet-based  \r\n2          1 Amazon Web ser~ F#               Internet-based  \r\n3          1 Amazon Web ser~ F#               Internet-based  \r\n4          2 Amazon Machine~ Python           Mix of fields   \r\n5          2 Amazon Machine~ Python           Mix of fields   \r\n6          2 Amazon Machine~ Python           Mix of fields   \r\n# ... with 2 more variables: WorkAlgorithmsSelect <chr>,\r\n#   work_tools <chr>\r\n\r\n\r\n\r\ntool_count <- tools %>% \r\n  group_by(work_tools) %>% \r\n  summarise(n = n()) %>% \r\n  arrange(-n)\r\n\r\nhead(tool_count)\r\n\r\n\r\n# A tibble: 6 x 2\r\n  work_tools            n\r\n  <chr>             <int>\r\n1 Python             6073\r\n2 R                  4708\r\n3 SQL                4261\r\n4 Jupyter notebooks  3206\r\n5 TensorFlow         2256\r\n6 <NA>               2198\r\n\r\n\r\n\r\nggplot(tool_count, aes(fct_reorder(work_tools, n), n)) +\r\n  geom_bar(stat = \"identity\") +\r\n  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))\r\n\r\n\r\n\r\n\r\n\r\n\r\ndebate_tools <- responses  %>% \r\n  mutate(language_preference = case_when(\r\n    str_detect(WorkToolsSelect, \"R\") & ! str_detect(WorkToolsSelect, \"Python\") ~ \"R\",\r\n    str_detect(WorkToolsSelect, \"Python\") & ! str_detect(WorkToolsSelect, \"R\") ~ \"Python\",\r\n    str_detect(WorkToolsSelect, \"R\") & str_detect(WorkToolsSelect, \"Python\")   ~ \"both\",\r\n    TRUE ~ \"neither\"\r\n  ))\r\n\r\n\r\n\r\n\r\n\r\n# Group by language preference, calculate number of responses, and remove \"neither\"\r\ndebate_plot <- debate_tools  %>% \r\n   group_by(language_preference)  %>% \r\n   summarise(n = n()) %>% \r\n  filter(language_preference != \"neither\")\r\n\r\n\r\n\r\n\r\n\r\nggplot(debate_plot, aes(language_preference, n)) +\r\n  geom_bar(stat = \"identity\")\r\n\r\n\r\n\r\n\r\n\r\n\r\nrecommendations <- debate_tools  %>% \r\n    group_by(language_preference, LanguageRecommendationSelect)  %>%\r\n    summarise(count = n())  %>% \r\n    arrange(language_preference, desc(count))  %>% \r\n    mutate(row = row_number()) %>% \r\n    filter(row <= 4)\r\n\r\n\r\n\r\n\r\n\r\nggplot(recommendations, aes(x = LanguageRecommendationSelect, y = count)) +\r\n    geom_bar(stat = \"identity\") + \r\n    facet_wrap(~language_preference)\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-20-project-8/project-8_files/figure-html5/unnamed-chunk-5-1.png",
+    "last_modified": "2020-12-21T00:00:15+06:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2020-12-19-project-1/",
     "title": "Project 1",
     "description": "A short description of the post.",

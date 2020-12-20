@@ -1,0 +1,116 @@
+---
+title: "Project 8"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+theme_set(theme_minimal())
+```
+```{r}
+responses <- read_csv(here::here("data", "kagglesurvey.csv"))
+```
+
+```{r}
+tools <- responses %>% 
+  mutate(work_tools = str_split(WorkToolsSelect, ",")) %>% 
+  unnest(work_tools) 
+
+head(tools)
+```
+
+
+```{r}
+tool_count <- tools %>% 
+  group_by(work_tools) %>% 
+  summarise(n = n()) %>% 
+  arrange(-n)
+
+head(tool_count)
+```
+
+
+```{r}
+ggplot(tool_count, aes(fct_reorder(work_tools, n), n)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+debate_tools <- responses  %>% 
+  mutate(language_preference = case_when(
+    str_detect(WorkToolsSelect, "R") & ! str_detect(WorkToolsSelect, "Python") ~ "R",
+    str_detect(WorkToolsSelect, "Python") & ! str_detect(WorkToolsSelect, "R") ~ "Python",
+    str_detect(WorkToolsSelect, "R") & str_detect(WorkToolsSelect, "Python")   ~ "both",
+    TRUE ~ "neither"
+  ))
+```
+
+
+```{r}
+# Group by language preference, calculate number of responses, and remove "neither"
+debate_plot <- debate_tools  %>% 
+   group_by(language_preference)  %>% 
+   summarise(n = n()) %>% 
+  filter(language_preference != "neither")
+```
+
+```{r}
+ggplot(debate_plot, aes(language_preference, n)) +
+  geom_bar(stat = "identity")
+```
+
+
+```{r}
+recommendations <- debate_tools  %>% 
+    group_by(language_preference, LanguageRecommendationSelect)  %>%
+    summarise(count = n())  %>% 
+    arrange(language_preference, desc(count))  %>% 
+    mutate(row = row_number()) %>% 
+    filter(row <= 4)
+```
+
+
+```{r}
+ggplot(recommendations, aes(x = LanguageRecommendationSelect, y = count)) +
+    geom_bar(stat = "identity") + 
+    facet_wrap(~language_preference)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
