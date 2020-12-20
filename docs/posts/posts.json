@@ -68,6 +68,23 @@
     "input_file": {}
   },
   {
+    "path": "posts/2020-12-20-project-7/",
+    "title": "Project 7",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Sajib Devnath",
+        "url": "https://www.sajibdevnath.com"
+      }
+    ],
+    "date": "2020-12-20",
+    "categories": [],
+    "contents": "\r\n\r\n\r\nlibrary(tidyverse)\r\nlibrary(lubridate)\r\ntheme_set(theme_minimal())\r\n\r\n\r\n\r\n\r\n\r\nnobel <- read_csv(here::here(\"data\", \"nobel.csv\"))\r\n\r\n\r\n\r\n\r\n\r\nnobel %>% \r\n  count()\r\n\r\n\r\n# A tibble: 1 x 1\r\n      n\r\n  <int>\r\n1   911\r\n\r\n\r\n\r\nnobel %>% \r\n  count(sex)\r\n\r\n\r\n# A tibble: 3 x 2\r\n  sex        n\r\n  <chr>  <int>\r\n1 Female    49\r\n2 Male     836\r\n3 <NA>      26\r\n\r\n\r\n\r\nnobel %>% \r\n  count(birth_country) %>% \r\n  arrange(-n) %>% \r\n  head(20)\r\n\r\n\r\n# A tibble: 20 x 2\r\n   birth_country                n\r\n   <chr>                    <int>\r\n 1 United States of America   259\r\n 2 United Kingdom              85\r\n 3 Germany                     61\r\n 4 France                      51\r\n 5 Sweden                      29\r\n 6 <NA>                        26\r\n 7 Japan                       24\r\n 8 Canada                      18\r\n 9 Netherlands                 18\r\n10 Italy                       17\r\n11 Russia                      17\r\n12 Switzerland                 16\r\n13 Austria                     14\r\n14 Norway                      12\r\n15 China                       11\r\n16 Denmark                     11\r\n17 Australia                   10\r\n18 Belgium                      9\r\n19 Scotland                     9\r\n20 South Africa                 9\r\n\r\n\r\n\r\nprop_usa_winners <- nobel %>% \r\n    mutate(usa_born_winner = if_else(birth_country == \"United States of America\", TRUE, FALSE))\r\n\r\n\r\n\r\n\r\n\r\nprop_usa_winners <- nobel %>% \r\n  mutate(usa_born_winner = if_else(birth_country == \"United States of America\", TRUE, FALSE)) %>% \r\n  mutate(decade = round(year / 10) * 10) %>% \r\n  group_by(decade) %>%\r\n  summarise(proportion = sum(usa_born_winner, na.rm = TRUE) /n())\r\n\r\n\r\n\r\n\r\n\r\nggplot(prop_usa_winners, aes(decade, proportion)) +\r\n  geom_point() +\r\n  geom_line() +\r\n  scale_y_continuous(labels = scales::percent, limits = c(0, 1))\r\n\r\n\r\n\r\n\r\n\r\n\r\nprop_female_winners <- nobel %>% \r\n  mutate(female_winner = sex == \"Female\") %>% \r\n  mutate(decade = round(year / 10) * 10) %>% \r\n  group_by(decade, category) %>% \r\n  summarise(proportion = mean(female_winner, na.rm = TRUE))\r\n\r\nggplot(prop_female_winners, aes(decade, proportion, color = category)) +\r\n  geom_point() +\r\n  geom_line() +\r\n  scale_y_continuous(labels = scales::percent, limits = c(0, 1))\r\n\r\n\r\n\r\n\r\n\r\n\r\nnobel %>% \r\n  filter(sex == \"Female\") %>% \r\n  top_n(1, desc(year))\r\n\r\n\r\n# A tibble: 1 x 18\r\n   year category prize motivation prize_share laureate_id\r\n  <dbl> <chr>    <chr> <chr>      <chr>             <dbl>\r\n1  1903 Physics  The ~ \"\\\"in rec~ 1/4                   6\r\n# ... with 12 more variables: laureate_type <chr>, full_name <chr>,\r\n#   birth_date <date>, birth_city <chr>, birth_country <chr>,\r\n#   sex <chr>, organization_name <chr>, organization_city <chr>,\r\n#   organization_country <chr>, death_date <date>, death_city <chr>,\r\n#   death_country <chr>\r\n\r\n\r\n\r\nlibrary(magrittr)\r\nmore_than_one <- nobel %>% \r\n  count(full_name) %>% \r\n  filter(n > 1) %>% \r\n  pull(full_name)\r\n\r\n\r\n\r\n\r\n\r\nnobel_age <- nobel %>% \r\n  mutate(age = year - year(birth_date))\r\n\r\n\r\n\r\n\r\n\r\nggplot(nobel_age, aes(year, age)) + \r\n    geom_point() + geom_smooth() +\r\n    scale_y_continuous(breaks = seq(10, 100, 20))\r\n\r\n\r\n\r\n\r\n\r\n\r\nggplot(nobel_age, aes(year, age)) + \r\n  geom_smooth() +\r\n  scale_y_continuous(breaks = seq(10, 100, 20)) +\r\n  facet_wrap(~ category)\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-20-project-7/project-7_files/figure-html5/unnamed-chunk-8-1.png",
+    "last_modified": "2020-12-20T22:43:38+06:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2020-12-19-project-1/",
     "title": "Project 1",
     "description": "A short description of the post.",

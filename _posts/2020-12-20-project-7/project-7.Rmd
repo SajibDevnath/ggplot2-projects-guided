@@ -1,0 +1,140 @@
+---
+title: "Project 7"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+theme_set(theme_minimal())
+```
+```{r}
+nobel <- read_csv(here::here("data", "nobel.csv"))
+```
+
+
+```{r}
+nobel %>% 
+  count()
+```
+```{r}
+nobel %>% 
+  count(sex)
+```
+
+```{r}
+nobel %>% 
+  count(birth_country) %>% 
+  arrange(-n) %>% 
+  head(20)
+```
+
+```{r}
+prop_usa_winners <- nobel %>% 
+    mutate(usa_born_winner = if_else(birth_country == "United States of America", TRUE, FALSE))
+
+```
+```{r}
+prop_usa_winners <- nobel %>% 
+  mutate(usa_born_winner = if_else(birth_country == "United States of America", TRUE, FALSE)) %>% 
+  mutate(decade = round(year / 10) * 10) %>% 
+  group_by(decade) %>%
+  summarise(proportion = sum(usa_born_winner, na.rm = TRUE) /n())
+```
+
+```{r}
+ggplot(prop_usa_winners, aes(decade, proportion)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1))
+```
+
+```{r}
+prop_female_winners <- nobel %>% 
+  mutate(female_winner = sex == "Female") %>% 
+  mutate(decade = round(year / 10) * 10) %>% 
+  group_by(decade, category) %>% 
+  summarise(proportion = mean(female_winner, na.rm = TRUE))
+
+ggplot(prop_female_winners, aes(decade, proportion, color = category)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1))
+```
+
+```{r}
+nobel %>% 
+  filter(sex == "Female") %>% 
+  top_n(1, desc(year))
+```
+
+```{r}
+library(magrittr)
+more_than_one <- nobel %>% 
+  count(full_name) %>% 
+  filter(n > 1) %>% 
+  pull(full_name)
+
+```
+
+
+```{r}
+nobel_age <- nobel %>% 
+  mutate(age = year - year(birth_date))
+```
+
+```{r}
+ggplot(nobel_age, aes(year, age)) + 
+    geom_point() + geom_smooth() +
+    scale_y_continuous(breaks = seq(10, 100, 20))
+```
+
+```{r}
+ggplot(nobel_age, aes(year, age)) + 
+  geom_smooth() +
+  scale_y_continuous(breaks = seq(10, 100, 20)) +
+  facet_wrap(~ category)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
