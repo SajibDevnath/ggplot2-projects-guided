@@ -1,0 +1,126 @@
+---
+title: "Project 5"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+by_tag_year <- read_csv(here::here("data", "by_tag_year.csv"))
+```
+
+```{r}
+by_tag_year_fraction <- by_tag_year %>% 
+  mutate(fraction = number / year_total)
+```
+
+
+```{r}
+by_tag_year_fraction %>% 
+  filter(tag == "r")  -> r_over_time
+```
+
+
+```{r}
+ggplot(r_over_time, aes(year, fraction)) +
+    geom_line()
+```
+
+
+```{r}
+selected_tags <- c("r", "dplyr", "ggplot2")
+
+selected_tags_over_time <- r_over_time <- by_tag_year_fraction %>% 
+  filter(tag %in% selected_tags)
+
+ggplot(selected_tags_over_time, aes(year, fraction, color = tag)) +
+    geom_line()
+```
+
+
+
+```{r}
+sorted_tags <- by_tag_year %>%
+    group_by(tag) %>%
+    summarise(n = sum(number)) %>%
+    arrange(desc(n))
+```
+
+
+```{r}
+highest_tags <- head(sorted_tags$tag)
+
+by_tag_subset <- by_tag_year_fraction %>%
+    filter(tag %in% highest_tags)
+
+# Plot tags over time on a line plot using color to represent tag
+ggplot(by_tag_subset, aes(x = year,
+                          y = fraction,
+                          color = tag)) +
+  geom_line(size = 1)
+```
+
+
+```{r}
+# Get tags of interest
+my_tags <- c("android", "ios", "windows-phone")
+
+# Filter for those tags
+by_tag_subset <- selected_tags_over_time <- by_tag_year_fraction %>%
+  filter(tag %in% my_tags)
+
+# Plot tags over time on a line plot using color to represent tag
+ggplot(by_tag_subset, aes(x = year,
+                          y = fraction,
+                          color = tag)) +
+  geom_line(size = 1)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
