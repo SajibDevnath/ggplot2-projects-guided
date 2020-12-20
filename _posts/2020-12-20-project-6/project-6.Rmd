@@ -1,0 +1,105 @@
+---
+title: "Project 6"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+
+```{r}
+library(tidyverse)
+```
+```{r}
+yearly <- read_csv(here::here("data", "yearly_deaths_by_clinic.csv"))
+```
+
+```{r}
+yearly %>% 
+  mutate(proportion_deaths = deaths / births) -> yearly
+```
+
+```{r}
+ggplot(yearly, aes(year, proportion_deaths, color = clinic)) +
+  geom_line()
+```
+
+```{r}
+monthly <- read_csv(here::here("data", "monthly_deaths.csv"))
+```
+
+```{r echo=TRUE}
+monthly  <- monthly %>%
+    mutate(proportion_deaths = deaths / births)
+head(monthly)
+```
+
+
+```{r}
+ggplot(monthly, aes(date, proportion_deaths)) +
+  geom_line() + 
+  labs(
+    x = "Date",
+    y = "Proportion of deaths"
+  )
+```
+
+```{r}
+handwashing_start = as.Date('1847-06-01')
+
+monthly <- monthly %>% 
+  mutate(handwashing_started = if_else(date < handwashing_start, FALSE, TRUE))
+```
+
+
+```{r}
+ggplot(monthly, aes(date, proportion_deaths, color = handwashing_started)) +
+  geom_line() + 
+  labs(
+    x = "Date",
+    y = "Proportion of deaths"
+  )
+```
+
+```{r}
+monthly_summary <- monthly %>% 
+  group_by(handwashing_started) %>% 
+  summarise(mean(proportion_deaths))
+```
+
+```{r}
+boxplot(proportion_deaths ~ handwashing_started, data = monthly)
+```
+
+
+```{r}
+t.test(proportion_deaths ~ handwashing_started, data = monthly)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

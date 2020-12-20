@@ -51,6 +51,23 @@
     "input_file": {}
   },
   {
+    "path": "posts/2020-12-20-project-6/",
+    "title": "Project 6",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Sajib Devnath",
+        "url": "https://www.sajibdevnath.com"
+      }
+    ],
+    "date": "2020-12-20",
+    "categories": [],
+    "contents": "\r\n\r\n\r\nlibrary(tidyverse)\r\n\r\n\r\n\r\n\r\n\r\nyearly <- read_csv(here::here(\"data\", \"yearly_deaths_by_clinic.csv\"))\r\n\r\n\r\n\r\n\r\n\r\nyearly %>% \r\n  mutate(proportion_deaths = deaths / births) -> yearly\r\n\r\n\r\n\r\n\r\n\r\nggplot(yearly, aes(year, proportion_deaths, color = clinic)) +\r\n  geom_line()\r\n\r\n\r\n\r\n\r\n\r\n\r\nmonthly <- read_csv(here::here(\"data\", \"monthly_deaths.csv\"))\r\n\r\n\r\n\r\n\r\n\r\nmonthly  <- monthly %>%\r\n    mutate(proportion_deaths = deaths / births)\r\nhead(monthly)\r\n\r\n\r\n# A tibble: 6 x 4\r\n  date       births deaths proportion_deaths\r\n  <date>      <dbl>  <dbl>             <dbl>\r\n1 1841-01-01    254     37           0.146  \r\n2 1841-02-01    239     18           0.0753 \r\n3 1841-03-01    277     12           0.0433 \r\n4 1841-04-01    255      4           0.0157 \r\n5 1841-05-01    255      2           0.00784\r\n6 1841-06-01    200     10           0.05   \r\n\r\n\r\n\r\nggplot(monthly, aes(date, proportion_deaths)) +\r\n  geom_line() + \r\n  labs(\r\n    x = \"Date\",\r\n    y = \"Proportion of deaths\"\r\n  )\r\n\r\n\r\n\r\n\r\n\r\n\r\nhandwashing_start = as.Date('1847-06-01')\r\n\r\nmonthly <- monthly %>% \r\n  mutate(handwashing_started = if_else(date < handwashing_start, FALSE, TRUE))\r\n\r\n\r\n\r\n\r\n\r\nggplot(monthly, aes(date, proportion_deaths, color = handwashing_started)) +\r\n  geom_line() + \r\n  labs(\r\n    x = \"Date\",\r\n    y = \"Proportion of deaths\"\r\n  )\r\n\r\n\r\n\r\n\r\n\r\n\r\nmonthly_summary <- monthly %>% \r\n  group_by(handwashing_started) %>% \r\n  summarise(mean(proportion_deaths))\r\n\r\n\r\n\r\n\r\n\r\nboxplot(proportion_deaths ~ handwashing_started, data = monthly)\r\n\r\n\r\n\r\n\r\n\r\n\r\nt.test(proportion_deaths ~ handwashing_started, data = monthly)\r\n\r\n\r\n\r\n    Welch Two Sample t-test\r\n\r\ndata:  proportion_deaths by handwashing_started\r\nt = 9.6101, df = 92.435, p-value = 1.445e-15\r\nalternative hypothesis: true difference in means is not equal to 0\r\n95 percent confidence interval:\r\n 0.06660662 0.10130659\r\nsample estimates:\r\nmean in group FALSE  mean in group TRUE \r\n         0.10504998          0.02109338 \r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-20-project-6/project-6_files/figure-html5/unnamed-chunk-4-1.png",
+    "last_modified": "2020-12-20T19:57:58+06:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2020-12-19-project-1/",
     "title": "Project 1",
     "description": "A short description of the post.",
