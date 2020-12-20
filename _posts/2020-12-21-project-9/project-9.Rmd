@@ -1,0 +1,100 @@
+---
+title: "Project 9"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-21-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+options(repr.plot.width = 5, repr.plot.height = 4)
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+theme_set(theme_minimal())
+```
+
+```{r}
+candy_data <- read_csv(here::here("data", "candy_crush.csv"))
+```
+
+
+```{r}
+# Calculating level difficulty
+difficulty <- candy_data %>%
+  group_by(level) %>%
+  summarise(attempts = sum(num_attempts), wins = sum(num_success)) %>%
+  mutate(p_win = wins / attempts)
+
+difficulty
+```
+
+```{r}
+ggplot(difficulty, aes(level, p_win)) +
+  geom_col(width = .7) +
+  scale_x_continuous(breaks = c(1:15)) +
+  scale_y_continuous(labels = scales::percent)
+```
+
+```{r}
+
+difficulty %>%
+  ggplot(aes(x = level, y = p_win)) + 
+    geom_line() + geom_point() +
+    scale_x_continuous(breaks = 1:15) +
+    scale_y_continuous(label = scales::percent) +
+    geom_hline(yintercept = 0.1, linetype = 'dashed')
+```
+
+
+```{r}
+difficulty_e <- difficulty %>%
+    mutate(error = sqrt(p_win * (1 - p_win) / attempts))
+```
+
+
+```{r}
+difficulty_e %>%
+  ggplot(aes(x = level, y = p_win)) + 
+    geom_line() + geom_point() +
+    scale_x_continuous(breaks = 1:15) +
+    scale_y_continuous(label = scales::percent) +
+    geom_hline(yintercept = 0.1, linetype = 'dashed') +
+    geom_errorbar(aes(ymin = p_win - error, ymax = p_win + error))
+```
+
+
+The probability of completing the episode without losing a single time
+
+```{r}
+p <- prod(difficulty$p_win)
+
+p
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

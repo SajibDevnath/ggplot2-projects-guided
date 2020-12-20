@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2020-12-21-project-9/",
+    "title": "Project 9",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Sajib Devnath",
+        "url": "https://www.sajibdevnath.com"
+      }
+    ],
+    "date": "2020-12-21",
+    "categories": [],
+    "contents": "\r\n\r\n\r\nlibrary(tidyverse)\r\nlibrary(lubridate)\r\ntheme_set(theme_minimal())\r\n\r\n\r\n\r\n\r\n\r\ncandy_data <- read_csv(here::here(\"data\", \"candy_crush.csv\"))\r\n\r\n\r\n\r\n\r\n\r\n# Calculating level difficulty\r\ndifficulty <- candy_data %>%\r\n  group_by(level) %>%\r\n  summarise(attempts = sum(num_attempts), wins = sum(num_success)) %>%\r\n  mutate(p_win = wins / attempts)\r\n\r\ndifficulty\r\n\r\n\r\n# A tibble: 15 x 4\r\n   level attempts  wins  p_win\r\n   <dbl>    <dbl> <dbl>  <dbl>\r\n 1     1     1322   818 0.619 \r\n 2     2     1285   666 0.518 \r\n 3     3     1546   662 0.428 \r\n 4     4     1893   705 0.372 \r\n 5     5     6937   634 0.0914\r\n 6     6     1591   668 0.420 \r\n 7     7     4526   614 0.136 \r\n 8     8    15816   641 0.0405\r\n 9     9     8241   670 0.0813\r\n10    10     3282   617 0.188 \r\n11    11     5575   603 0.108 \r\n12    12     6868   659 0.0960\r\n13    13     1327   686 0.517 \r\n14    14     2772   777 0.280 \r\n15    15    30374  1157 0.0381\r\n\r\n\r\n\r\nggplot(difficulty, aes(level, p_win)) +\r\n  geom_col(width = .7) +\r\n  scale_x_continuous(breaks = c(1:15)) +\r\n  scale_y_continuous(labels = scales::percent)\r\n\r\n\r\n\r\n\r\n\r\n\r\ndifficulty %>%\r\n  ggplot(aes(x = level, y = p_win)) + \r\n    geom_line() + geom_point() +\r\n    scale_x_continuous(breaks = 1:15) +\r\n    scale_y_continuous(label = scales::percent) +\r\n    geom_hline(yintercept = 0.1, linetype = 'dashed')\r\n\r\n\r\n\r\n\r\n\r\n\r\ndifficulty_e <- difficulty %>%\r\n    mutate(error = sqrt(p_win * (1 - p_win) / attempts))\r\n\r\n\r\n\r\n\r\n\r\ndifficulty_e %>%\r\n  ggplot(aes(x = level, y = p_win)) + \r\n    geom_line() + geom_point() +\r\n    scale_x_continuous(breaks = 1:15) +\r\n    scale_y_continuous(label = scales::percent) +\r\n    geom_hline(yintercept = 0.1, linetype = 'dashed') +\r\n    geom_errorbar(aes(ymin = p_win - error, ymax = p_win + error))\r\n\r\n\r\n\r\n\r\nThe probability of completing the episode without losing a single time\r\n\r\n\r\np <- prod(difficulty$p_win)\r\n\r\np\r\n\r\n\r\n[1] 9.447141e-12\r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-21-project-9/project-9_files/figure-html5/unnamed-chunk-4-1.png",
+    "last_modified": "2020-12-21T02:29:46+06:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2020-12-20-project-3/",
     "title": "Project 3",
     "description": "A short description of the post.",
