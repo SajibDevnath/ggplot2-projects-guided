@@ -1,0 +1,204 @@
+---
+title: "Project 4"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-20-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(magrittr)
+library(forecast)
+```
+
+```{r}
+irish_potatoes <- read_csv(
+  here::here("data", "Potatoes_Irish.csv"),
+  col_types = cols_only(
+    adm1_name = col_character(),
+    mkt_name = col_character(),
+    cm_name = col_character(),
+    mp_month = col_integer(),
+    mp_year = col_integer(),
+    mp_price = col_double()
+  )
+) %>% 
+    rename(
+    region = adm1_name, 
+    market = mkt_name,
+    commodity_kg = cm_name,
+    month = mp_month,
+    year = mp_year,
+    price_rwf = mp_price
+  )
+```
+
+
+```{r}
+irish_potatoes %>% 
+  mutate(date = ymd(paste(year, month, "01", sep = "-"))) %>% 
+  select(-month, -year) -> potatoes_cleaned
+```
+
+
+```{r}
+read_price_data <- function (commodity) {
+  irish_potatoes <- read_csv(
+  here::here("data", paste0(commodity, ".csv")),
+  col_types = cols_only(
+    adm1_name = col_character(),
+    mkt_name = col_character(),
+    cm_name = col_character(),
+    mp_month = col_integer(),
+    mp_year = col_integer(),
+    mp_price = col_double()
+  )
+) %>% 
+    rename(
+    region = adm1_name, 
+    market = mkt_name,
+    commodity_kg = cm_name,
+    month = mp_month,
+    year = mp_year,
+    price_rwf = mp_price
+  )
+  
+  irish_potatoes %>% 
+  mutate(date = ymd(paste(year, month, "01", sep = "-"))) %>% 
+  select(-month, -year) -> potatoes_cleaned
+}
+```
+
+
+```{r}
+
+beans_dry <- read_price_data("Beans (dry)")
+```
+
+
+```{r}
+price_vs_time_plot <- function (prices, commodity) {
+  ggplot(potatoes_cleaned, aes(date, price_rwf, group = market)) +
+    geom_line(alpha = 0.2) +
+    ggtitle(paste0(commodity, " price over time"))
+}
+```
+
+
+```{r}
+price_vs_time_plot(beans_dry, "Beans")
+```
+
+
+
+```{r}
+potato_prices_summarized <- potatoes_cleaned %>%
+    group_by(date) %>%
+    summarize(median_price_rwf = median(price_rwf))
+```
+
+
+
+```{r echo=TRUE}
+
+potato_time_series <- potato_prices_summarized %$% 
+  ts(
+    median_price_rwf, 
+    start = c(year(min(date)), month(min(date))), 
+    end   = c(year(max(date)), month(max(date))), 
+    frequency = 12
+  )
+
+potato_time_series
+```
+
+
+```{r}
+create_price_time_series <- function(prices) {
+  potato_prices_summarized <- prices %>%
+    group_by(date) %>%
+    summarize(median_price_rwf = median(price_rwf))
+  
+  potato_time_series <- potato_prices_summarized %$% 
+    ts(
+      median_price_rwf, 
+      start = c(year(min(date)), month(min(date))), 
+      end   = c(year(max(date)), month(max(date))), 
+      frequency = 12
+    )
+  
+  potato_time_series
+}
+```
+
+```{r echo=TRUE}
+create_price_time_series(beans_dry)
+```
+
+```{r}
+potato_price_forcast <- forecast(potato_time_series)
+
+autoplot(potato_price_forcast, main = "Potato price forecast")
+```
+
+
+```{r}
+plot_price_forecast <- function(time_series, commodity) {
+  potato_price_forcast <- forecast(potato_time_series)
+  autoplot(potato_price_forcast, main = paste0(commodity, " price forecast"))
+}
+
+# Try the function on the pea data
+plot_price_forecast(beans_dry, "Beans")
+```
+
+
+```{r}
+# Choose dry beans as the commodity
+commodity <- "Peas+(fresh)"
+
+# Read the price data
+bean_prices <- read_price_data(commodity)
+
+# Plot price vs. time
+price_vs_time_plot(bean_prices, commodity)
+
+# Create a price time series
+bean_time_series <- create_price_time_series(bean_prices)
+
+# Plot the price forecast
+plot_price_forecast(bean_time_series, commodity)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
