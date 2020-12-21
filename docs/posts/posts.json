@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2020-12-21-project-10/",
+    "title": "Project 10",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Sajib Devnath",
+        "url": "https://www.sajibdevnath.com"
+      }
+    ],
+    "date": "2020-12-21",
+    "categories": [],
+    "contents": "\r\n\r\n\r\nlibrary(tidyverse)\r\nlibrary(lubridate)\r\ntheme_set(theme_minimal())\r\n\r\n\r\n\r\n\r\n\r\nbb <- read_csv(here::here(\"data\", \"bb_chords.csv\"))\r\n\r\n\r\n\r\nThe most common chords:\r\n\r\n\r\nbb_count <- bb %>% \r\n  count(chord, sort = TRUE)\r\n\r\n\r\n\r\n\r\n\r\nbb_count %>% \r\n  slice(1:20) %>% \r\n  mutate(\r\n    share = n / sum(n),\r\n    chord = reorder(chord, n)\r\n  ) %>% \r\n  ggplot(aes(chord, share, fill = chord)) +\r\n  geom_col() +\r\n  coord_flip() +\r\n  labs(\r\n    y = \"Share of total chords\",\r\n    x = \"chord\"\r\n  ) +\r\n  theme(legend.position = \"none\")\r\n\r\n\r\n\r\n\r\nChord “bigrams”\r\n\r\n\r\nbb_bigram_count <- bb %>% \r\n  mutate(next_chord = lead(chord),\r\n         next_title = lead(title)) %>%\r\n  filter(title == next_title) %>% \r\n  mutate(bigram = paste(chord, next_chord)) %>% \r\n  count(bigram, sort = TRUE)\r\n\r\n\r\n\r\n\r\n\r\nbb_bigram_count %>% \r\n  slice(1:20) %>% \r\n  mutate(\r\n    share = n / sum(n),\r\n    bigram = reorder(bigram, n)\r\n  ) %>% \r\n  ggplot(aes(bigram, share, fill = bigram)) +\r\n  geom_col() +\r\n  coord_flip() +\r\n  labs(\r\n    y = \"Share of total bigram\",\r\n    x = \"bigram\"\r\n  ) +\r\n  theme(legend.position = \"none\")\r\n\r\n\r\n\r\n\r\nMost common artists:\r\n\r\n\r\nbb_30_artists <- bb %>%\r\n  select(artist, title) %>%\r\n  unique() %>%\r\n  count(artist, sort = TRUE)\r\n\r\nbb_30_artists %>%\r\n  slice(1:30)\r\n\r\n\r\n# A tibble: 30 x 2\r\n   artist            n\r\n   <chr>         <int>\r\n 1 Elvis Presley    13\r\n 2 Brenda Lee        9\r\n 3 Dion              8\r\n 4 Bob Seger         7\r\n 5 James Brown       7\r\n 6 Kenny Rogers      7\r\n 7 The Beatles       7\r\n 8 Chicago           6\r\n 9 Dr. Hook          6\r\n10 Eric Clapton      6\r\n# ... with 20 more rows\r\n\r\n\r\n\r\ntags <- tibble(\r\n  artist = c('Abba', 'Billy Joel', 'Elton John', 'Stevie Wonder', 'The Rolling Stones', 'The Beatles', 'Eric Clapton'),\r\n  instrument = c('piano', 'piano', 'piano', 'piano', 'guitar', 'guitar', 'guitar'))\r\n\r\nbb_tagged <- bb %>% \r\n  inner_join(tags, by = \"artist\")\r\n\r\n\r\n\r\n\r\n\r\ntop_20 <- bb_count$chord[1:20]\r\n\r\n\r\nbb_tagged %>%\r\n  filter(chord %in% top_20) %>%\r\n  count(chord, instrument, sort = TRUE) %>%\r\n  ggplot(aes(reorder(chord, n), n, fill = chord)) +\r\n  geom_col() +\r\n  facet_grid(~ instrument) +\r\n  coord_flip() +\r\n  xlab(\"Chord\") +\r\n  ylab(\"Number of times used\") +\r\n  theme(legend.position = \"none\")\r\n\r\n\r\n\r\n\r\n\r\n\r\ntop_20_bigram <- bb_bigram_count$bigram[1:20]\r\n\r\nbb_tagged %>%\r\n  mutate(next_chord = lead(chord),\r\n         next_title = lead(title),\r\n         bigram = paste(chord, next_chord)) %>%\r\n  filter(title == next_title) %>%\r\n  count(bigram, instrument, sort = TRUE) %>%\r\n  filter(bigram %in% top_20_bigram) %>%\r\n  ggplot(aes(bigram, n, fill = bigram)) +\r\n  geom_col() +\r\n  facet_grid(~instrument) +\r\n  coord_flip() +\r\n  ylab('Total bigrams') +\r\n  xlab('Bigram') +\r\n  theme(legend.position=\"none\")\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "preview": "posts/2020-12-21-project-10/project-10_files/figure-html5/unnamed-chunk-4-1.png",
+    "last_modified": "2020-12-21T12:26:55+06:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2020-12-21-project-9/",
     "title": "Project 9",
     "description": "A short description of the post.",

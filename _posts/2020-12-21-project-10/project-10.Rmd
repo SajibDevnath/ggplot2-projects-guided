@@ -1,0 +1,178 @@
+---
+title: "Project 10"
+description: |
+  A short description of the post.
+author:
+  - name: Sajib Devnath
+    url: https://www.sajibdevnath.com
+date: 12-21-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+options(repr.plot.width = 5, repr.plot.height = 4)
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+theme_set(theme_minimal())
+```
+
+
+```{r}
+bb <- read_csv(here::here("data", "bb_chords.csv"))
+```
+
+
+The most common chords:
+
+```{r}
+bb_count <- bb %>% 
+  count(chord, sort = TRUE)
+```
+
+
+```{r}
+bb_count %>% 
+  slice(1:20) %>% 
+  mutate(
+    share = n / sum(n),
+    chord = reorder(chord, n)
+  ) %>% 
+  ggplot(aes(chord, share, fill = chord)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    y = "Share of total chords",
+    x = "chord"
+  ) +
+  theme(legend.position = "none")
+```
+
+
+Chord "bigrams"
+
+```{r}
+bb_bigram_count <- bb %>% 
+  mutate(next_chord = lead(chord),
+         next_title = lead(title)) %>%
+  filter(title == next_title) %>% 
+  mutate(bigram = paste(chord, next_chord)) %>% 
+  count(bigram, sort = TRUE)
+```
+
+
+```{r}
+bb_bigram_count %>% 
+  slice(1:20) %>% 
+  mutate(
+    share = n / sum(n),
+    bigram = reorder(bigram, n)
+  ) %>% 
+  ggplot(aes(bigram, share, fill = bigram)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    y = "Share of total bigram",
+    x = "bigram"
+  ) +
+  theme(legend.position = "none")
+```
+
+
+Most common artists:
+
+```{r}
+bb_30_artists <- bb %>%
+  select(artist, title) %>%
+  unique() %>%
+  count(artist, sort = TRUE)
+
+bb_30_artists %>%
+  slice(1:30)
+```
+
+
+```{r}
+tags <- tibble(
+  artist = c('Abba', 'Billy Joel', 'Elton John', 'Stevie Wonder', 'The Rolling Stones', 'The Beatles', 'Eric Clapton'),
+  instrument = c('piano', 'piano', 'piano', 'piano', 'guitar', 'guitar', 'guitar'))
+
+bb_tagged <- bb %>% 
+  inner_join(tags, by = "artist")
+
+```
+
+
+
+```{r}
+top_20 <- bb_count$chord[1:20]
+
+
+bb_tagged %>%
+  filter(chord %in% top_20) %>%
+  count(chord, instrument, sort = TRUE) %>%
+  ggplot(aes(reorder(chord, n), n, fill = chord)) +
+  geom_col() +
+  facet_grid(~ instrument) +
+  coord_flip() +
+  xlab("Chord") +
+  ylab("Number of times used") +
+  theme(legend.position = "none")
+
+```
+
+
+```{r}
+top_20_bigram <- bb_bigram_count$bigram[1:20]
+
+bb_tagged %>%
+  mutate(next_chord = lead(chord),
+         next_title = lead(title),
+         bigram = paste(chord, next_chord)) %>%
+  filter(title == next_title) %>%
+  count(bigram, instrument, sort = TRUE) %>%
+  filter(bigram %in% top_20_bigram) %>%
+  ggplot(aes(bigram, n, fill = bigram)) +
+  geom_col() +
+  facet_grid(~instrument) +
+  coord_flip() +
+  ylab('Total bigrams') +
+  xlab('Bigram') +
+  theme(legend.position="none")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
